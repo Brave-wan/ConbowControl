@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">慷调Ⅱ</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="first_paragraph">在方便业主生活缴费方面，我们是业内首家打通水、电、气等生活缴费线上化平台，业主通过大社区App查询待缴费用，并实现在线付、预缴、代扣等多种方式.</string>
+    <string name="two_paragraph">在解决业主的报事报修方面，业主可以直接通过大社区App上传报事报修内容，物业能在5分钟内立即响应业主发出的“报事报修”状况并快速上门解决。</string>
+    <string name="three_paragraph">在便捷来访人员通行方面，业主通过大社区APP提前录入访客到访信息，访客只需输入通行密码即可快速通行，业主也可提前录入访客车牌信息，让来访车辆也拥有快速进出的特权。</string>
+    <string name="four_paragraph">在解决业主的需求方面，可以通过大社区App快速致电专属管家，楼栋管家会第一时间帮助解决问题；还可以查询小区周边配套服务热线电话；同时在线客服会在24小时内在线解答业主的疑问并提供帮助</string>
+</resources>
