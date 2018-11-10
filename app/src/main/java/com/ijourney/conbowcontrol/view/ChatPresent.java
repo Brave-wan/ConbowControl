@@ -180,15 +180,17 @@ public class ChatPresent {
 
         featuresBeans.add(new FixedBean("首页", getFixedName("fixed_home", ""), "20", "20.png", "fixed_home"));
         featuresBeans.add(new FixedBean("视频播放", getFixedName("fixed_video", ""), "21", "21.png", "fixed_video"));
-//        featuresBeans.add(new FixedBean("视频定格", getFixedName("fixed_freeze", ""), "11", "11.png", "fixed_freeze"));
-        featuresBeans.add(new FixedBean("缴费", getFixedName("fixed_payment", (mContext.getResources().getString(R.string.first_paragraph))), "1_1", "1_1.png", "fixed_payment"));
-        featuresBeans.add(new FixedBean("报事", getFixedName("fixed_report", (mContext.getResources().getString(R.string.two_paragraph))), "1_2", "1_2.png", "fixed_report"));
-        featuresBeans.add(new FixedBean("放行", getFixedName("fixed_release", (mContext.getResources().getString(R.string.three_paragraph))), "1_3", "1_3.png", "fixed_release"));
-        featuresBeans.add(new FixedBean("呼叫", getFixedName("fixed_call", (mContext.getResources().getString(R.string.four_paragraph))), "1_4", "1_4.png", "fixed_call"));
-
+        featuresBeans.add(new FixedBean("视频定格", getFixedName("fixed_freeze", ""), "22", "22.png", "fixed_freeze"));
+//        featuresBeans.add(new FixedBean("缴费", getFixedName("fixed_payment", (mContext.getResources().getString(R.string.first_paragraph))), "1_1", "1_1.png", "fixed_payment"));
+//        featuresBeans.add(new FixedBean("报事", getFixedName("fixed_report", (mContext.getResources().getString(R.string.two_paragraph))), "1_2", "1_2.png", "fixed_report"));
+//        featuresBeans.add(new FixedBean("放行", getFixedName("fixed_release", (mContext.getResources().getString(R.string.three_paragraph))), "1_3", "1_3.png", "fixed_release"));
+//        featuresBeans.add(new FixedBean("呼叫", getFixedName("fixed_call", (mContext.getResources().getString(R.string.four_paragraph))), "1_4", "1_4.png", "fixed_call"));
+        featuresBeans.add(new FixedBean("智慧出行", getFixedName("fixed_call", ","), "23", "23.png", "fixed_call"));
+        featuresBeans.add(new FixedBean("智慧通行", getFixedName("fixed_pass", ","), "24", "24.png", "fixed_call"));
+        featuresBeans.add(new FixedBean("报事服务", getFixedName("fixed_service", ","), "25", "25.png", "fixed_call"));
         String msg = mContext.getResources().getString(R.string.first_paragraph) + mContext.getResources().getString(R.string.two_paragraph) + mContext.getResources().getString(R.string.three_paragraph) + mContext.getResources().getString(R.string.four_paragraph);
 //        featuresBeans.add(new FixedBean("自动播放", getFixedName("fixed_auto", msg), "1_auto", "1_auto.png", "fixed_auto"));
-        featuresBeans.add(new FixedBean("启动天启", getFixedName("fixed_start", ""), "2", "2.png", "fixed_start"));
+        featuresBeans.add(new FixedBean("启动天启", getFixedName("fixed_start", ""), "26", "26.png", "fixed_start"));
         featuresBeans.add(new FixedBean("暂停", getFixedName("fixed_pause", ""), "", "", "fixed_pause"));
         return featuresBeans;
     }
