@@ -83,9 +83,7 @@ public class SharedPreferencesUtils {
         return sSharedPreferencesUtils;
     }
 
-    public Object get(@StringRes int key, Object defaultObject) {
-        return get(mContext.getString(key), defaultObject);
-    }
+
 
     public Object get(String key, Object defaultObject) {
         if (defaultObject instanceof String) {

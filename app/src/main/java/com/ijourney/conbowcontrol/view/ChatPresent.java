@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
 import com.ijourney.conbowcontrol.R;
 import com.ijourney.conbowcontrol.bean.FixedBean;
@@ -78,6 +79,7 @@ public class ChatPresent {
             super.onOpen(webSocket, response);
             mSocket = webSocket;
             output("连接成功！");
+            ToastUtils.showShort("连接成功！");
 
         }
 
@@ -132,12 +134,13 @@ public class ChatPresent {
         return jsonHead;
     }
 
-    public String sendMsgData(String position, String page) {
+    public String sendMsgData(String position, String page, String type) {
         String jsonHead = "";
         List<OrderListBean> listBeans = new ArrayList<>();
         OrderListBean bean = new OrderListBean();
         bean.setPage(position);
         bean.setShowImg(page);
+        bean.setType(type);
         listBeans.add(bean);
         Map<String, Object> mapHead = new HashMap<>();
         mapHead.put("type", "order");
@@ -178,20 +181,35 @@ public class ChatPresent {
     public List<FixedBean> getFixedTop() {
         List<FixedBean> featuresBeans = new ArrayList<>();
 
-        featuresBeans.add(new FixedBean("首页", getFixedName("fixed_home", ""), "20", "20.png", "fixed_home"));
-        featuresBeans.add(new FixedBean("视频播放", getFixedName("fixed_video", ""), "21", "21.png", "fixed_video"));
-        featuresBeans.add(new FixedBean("视频定格", getFixedName("fixed_freeze", ""), "22", "22.png", "fixed_freeze"));
+        featuresBeans.add(new FixedBean("首页", getFixedName("fixed_home", ""), "20",
+                "20.png", "fixed_home", getSocketState("home_state", "0")));
+        featuresBeans.add(new FixedBean("视频播放", getFixedName("fixed_video", ""),
+                "21", "21.png", "fixed_video", getSocketState("video_state", "0")));
+        featuresBeans.add(new FixedBean("视频定格", getFixedName("fixed_freeze", ""),
+                "22", "22.png", "fixed_freeze", getSocketState("freeze_state", "0")));
 //        featuresBeans.add(new FixedBean("缴费", getFixedName("fixed_payment", (mContext.getResources().getString(R.string.first_paragraph))), "1_1", "1_1.png", "fixed_payment"));
 //        featuresBeans.add(new FixedBean("报事", getFixedName("fixed_report", (mContext.getResources().getString(R.string.two_paragraph))), "1_2", "1_2.png", "fixed_report"));
 //        featuresBeans.add(new FixedBean("放行", getFixedName("fixed_release", (mContext.getResources().getString(R.string.three_paragraph))), "1_3", "1_3.png", "fixed_release"));
 //        featuresBeans.add(new FixedBean("呼叫", getFixedName("fixed_call", (mContext.getResources().getString(R.string.four_paragraph))), "1_4", "1_4.png", "fixed_call"));
-        featuresBeans.add(new FixedBean("智慧出行", getFixedName("fixed_call", ","), "23", "23.png", "fixed_call"));
-        featuresBeans.add(new FixedBean("智慧通行", getFixedName("fixed_pass", ","), "24", "24.png", "fixed_call"));
-        featuresBeans.add(new FixedBean("报事服务", getFixedName("fixed_service", ","), "25", "25.png", "fixed_call"));
+        featuresBeans.add(new FixedBean("智慧出行", getFixedName("fixed_call", (mContext.getResources().getString(R.string.smart_travel))),
+                "23", "23.png", "fixed_call", getSocketState("call_state", "0")));
+        featuresBeans.add(new FixedBean("智慧通行", getFixedName("fixed_pass", (mContext.getResources().getString(R.string.wisdom_pass))),
+                "24", "24.png", "fixed_pass", getSocketState("freeze_state", getSocketState("pass_state", "0"))));
+        featuresBeans.add(new FixedBean("报事服务", getFixedName("fixed_service", (mContext.getResources().getString(R.string.report_service))),
+                "25", "25.png", "fixed_service", getSocketState("service_state", "0")));
+        featuresBeans.add(new FixedBean("启动天启", getFixedName("fixed_start", ""),
+                "26", "26.png", "fixed_start", "0"));
+//        featuresBeans.add(new FixedBean("天启首页", getFixedName("fixed_tq_home", ","), "26-1", "26-1.png", "fixed_tq_home"));
+//        featuresBeans.add(new FixedBean("北京王府", getFixedName("fixed_beijing", ","), "26-2", "26-2.png", "fixed_beijing"));
+//        featuresBeans.add(new FixedBean("十年城", getFixedName("fixed_ten", ","), "26-3", "26-3.png", "fixed_ten"));
+//        featuresBeans.add(new FixedBean("西部区域", getFixedName("fixed_area", ","), "26-4", "26-4.png", "fixed_area"));
+//        featuresBeans.add(new FixedBean("大管家", getFixedName("fixed_houseKeeper", ","), "26-5", "26-5.png", "fixed_houseKeeper"));
+//        featuresBeans.add(new FixedBean("EBA", getFixedName("fixed_eba", ","), "26-6", "26-6.png", "fixed_eba"));
+//        featuresBeans.add(new FixedBean("智慧社区", getFixedName("fixed_community", ","), "26-7", "26-7.png", "fixed_community"));
+
         String msg = mContext.getResources().getString(R.string.first_paragraph) + mContext.getResources().getString(R.string.two_paragraph) + mContext.getResources().getString(R.string.three_paragraph) + mContext.getResources().getString(R.string.four_paragraph);
 //        featuresBeans.add(new FixedBean("自动播放", getFixedName("fixed_auto", msg), "1_auto", "1_auto.png", "fixed_auto"));
-        featuresBeans.add(new FixedBean("启动天启", getFixedName("fixed_start", ""), "26", "26.png", "fixed_start"));
-        featuresBeans.add(new FixedBean("暂停", getFixedName("fixed_pause", ""), "", "", "fixed_pause"));
+//        featuresBeans.add(new FixedBean("暂停", getFixedName("fixed_pause", ""), "", "", "fixed_pause"));
         return featuresBeans;
     }
 
@@ -200,6 +218,13 @@ public class ChatPresent {
         String name = StringUtils.isEmpty(SharedPreferencesUtils.init(mContext).getString(tag)) ? initData
                 : SharedPreferencesUtils.init(mContext).getString(tag);
         return name;
+    }
+
+    public String getSocketState(String tag, String state) {
+        String name = StringUtils.isEmpty(SharedPreferencesUtils.init(mContext).getString(tag)) ? state
+                : SharedPreferencesUtils.init(mContext).getString(tag);
+        return name;
+
     }
 
 }

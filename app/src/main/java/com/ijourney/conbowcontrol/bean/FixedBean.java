@@ -6,7 +6,25 @@ public class FixedBean {
     private String socket_position;
     private String socket_page;
     private boolean isCheck;
+    private String type;
+    private int id;
     private String tag;
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
 
     public void setTag(String tag) {
         this.tag = tag;
@@ -24,12 +42,13 @@ public class FixedBean {
 
     }
 
-    public FixedBean(String name, String content, String socket_position, String socket_page, String tag) {
+    public FixedBean(String name, String content, String socket_position, String socket_page, String tag, String type) {
         this.name = name;
         this.content = content;
         this.socket_page = socket_page;
         this.socket_position = socket_position;
         this.tag = tag;
+        this.type = type;
 
     }
 

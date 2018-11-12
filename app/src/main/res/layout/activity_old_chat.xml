@@ -147,6 +147,32 @@
                     android:text="发送"
                     android:textColor="@drawable/shape_chat_edit_tx_color"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tx_socket_connect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tx_save"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/tx_send"
+                    android:background="@drawable/shape_chat_edit_tx_bg"
+                    android:padding="5dp"
+                    android:text="服务重连"
+                    android:textColor="@drawable/shape_chat_edit_tx_color"
+                    android:textSize="16sp" />
+
+                <CheckBox
+                    android:id="@+id/tx_socket_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tx_save"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/tx_socket_connect"
+                    android:background="@drawable/shape_chat_edit_tx_bg"
+                    android:padding="5dp"
+                    android:text="康宝状态"
+                    android:textColor="@drawable/shape_chat_edit_tx_color"
+                    android:textSize="16sp" />
             </RelativeLayout>
 
 

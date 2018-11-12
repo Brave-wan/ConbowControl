@@ -10,6 +10,8 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -36,7 +38,7 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OldChatActivity extends Activity implements IChatView, OnClickListener, MessageDialog.onMessageListener {
+public class OldChatActivity extends Activity implements IChatView, OnClickListener, MessageDialog.onMessageListener, CompoundButton.OnCheckedChangeListener {
     private EditText ed_content;
     private MyGridView rv_list, rv_fixed_list;
 
@@ -56,6 +58,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
     private ChatPresent present;
     private BaseQuickAdapter<FeaturesBean, BaseViewHolder> adapter;
     private List<FeaturesBean> featuresBeans = new ArrayList<>();
+    private CheckBox tx_socket_state;
 
     public static void start(Activity activity, Host participant) {
         Intent intent = new Intent(activity, OldChatActivity.class);
@@ -132,17 +135,22 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
     private void initView() {
         mParticipant = getIntent().getParcelableExtra(BUNDLE_PARTICIPANT);
         featuresBeans = DataSupport.findAll(FeaturesBean.class);
+        String service_state = SharedPreferencesUtils.init(this).getString("service_state");
 
         findViewById(R.id.img_tune_add).setOnClickListener(this);
-        scrollView = (ScrollView) findViewById(R.id.scrollView);
-        rv_fixed_list = (MyGridView) findViewById(R.id.rv_fixed_list);
-        rv_list = (MyGridView) findViewById(R.id.rv_list);
+        scrollView = findViewById(R.id.scrollView);
+        rv_fixed_list = findViewById(R.id.rv_fixed_list);
+        tx_socket_state = findViewById(R.id.tx_socket_state);
+        rv_list = findViewById(R.id.rv_list);
         findViewById(R.id.tx_send).setOnClickListener(this);
         findViewById(R.id.tx_save).setOnClickListener(this);
         findViewById(R.id.btn_add).setOnClickListener(this);
-        ed_content = (EditText) findViewById(R.id.ed_content);
+        tx_socket_state.setOnCheckedChangeListener(this);
+        findViewById(R.id.tx_socket_connect).setOnClickListener(this);
+        ed_content = findViewById(R.id.ed_content);
 
-
+        tx_socket_state.setText(service_state.equals("0") ? "关闭康宝说话" : "开启康宝说话");
+        tx_socket_state.setChecked(service_state.equals("0"));
         initAdapter();
         initFixedAdapter();
         clearListState();
@@ -170,11 +178,11 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 }
                 fixedBeans.get(position).setCheck(true);
                 fixedListAdapter.setData(fixedBeans);
-                if (!StringUtils.isEmpty(fixedBean.getContent())) {
+                if (!StringUtils.isEmpty(fixedBean.getContent()) && fixedBean.getType().equals("0")) {
                     sendMessage(fixedBean.getContent());
                 }
                 if (!StringUtils.isEmpty(fixedBean.getSocket_position()) && !StringUtils.isEmpty(fixedBean.getSocket_page())) {
-                    present.sendMsgData(fixedBean.getSocket_position(), fixedBean.getSocket_page());
+                    present.sendMsgData(fixedBean.getSocket_position(), fixedBean.getSocket_page(), fixedBean.getType());
 
                 }
                 ed_content.setText(fixedBean.getContent());
@@ -206,10 +214,8 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 initAdapter();
                 ed_content.setText(bean.getContent());
                 if (!StringUtils.isEmpty(bean.getContent())) {
-//                    sendChatMessage(bean.getContent());
+                    sendMessage(bean.getContent());
                 }
-
-
             }
         });
     }
@@ -252,6 +258,9 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 MessageDialog messageDialog = new MessageDialog(this, new FeaturesBean());
                 messageDialog.setOnMessageListener(this);
                 messageDialog.show();
+                break;
+            case R.id.tx_socket_connect:
+                present.setListener();
                 break;
 
         }
@@ -325,5 +334,15 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         super.onBackPressed();
         mNearConnect.send(STATUS_EXIT_CHAT.getBytes(), mParticipant);
         mNearConnect.stopReceiving(true);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        SharedPreferencesUtils.init(this).put("call_state", isChecked ? "0" : "1");
+        SharedPreferencesUtils.init(this).put("freeze_state", isChecked ? "0" : "1");
+        SharedPreferencesUtils.init(this).put("service_state", isChecked ? "0" : "1");
+        initFixedAdapter();
+        tx_socket_state.setText(isChecked ? "关闭康宝说话" : "开启康宝说话");
+
     }
 }
