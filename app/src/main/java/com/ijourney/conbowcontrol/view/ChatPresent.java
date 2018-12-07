@@ -256,21 +256,45 @@ public class ChatPresent {
                     dialog.show();
             }
         });
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);//允许使用js
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-
-        /**
-         * LOAD_CACHE_ONLY: 不使用网络，只读取本地缓存数据
-         * LOAD_DEFAULT: （默认）根据cache-control决定是否从网络上取数据。
-         * LOAD_NO_CACHE: 不使用缓存，只从网络获取数据.
-         * LOAD_CACHE_ELSE_NETWORK，只要本地有，无论是否过期，或者no-cache，都使用缓存中的数据。
-         */
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);//不使用缓存，只从网络获取数据.
+        WebSettings webSetting = webView.getSettings();
+        webSetting.setAllowFileAccess(true);
+        webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        webSetting.setSupportZoom(true);
+        webSetting.setBuiltInZoomControls(true);
+        webSetting.setUseWideViewPort(true);
+        webSetting.setSupportMultipleWindows(false);
+        // webSetting.setLoadWithOverviewMode(true);
+        webSetting.setAppCacheEnabled(true);
+        // webSetting.setDatabaseEnabled(true);
+        webSetting.setDomStorageEnabled(true);
+        webSetting.setJavaScriptEnabled(true);
+        webSetting.setGeolocationEnabled(true);
+        webSetting.setAppCacheMaxSize(Long.MAX_VALUE);
+//        webSetting.setAppCachePath(mContext.getDir("appcache", 0).getPath());
+//        webSetting.setDatabasePath(mContext.getDir("databases", 0).getPath());
+//        webSetting.setGeolocationDatabasePath(mContext.getDir("geolocation", 0).getPath());
+        // webSetting.setPageCacheCapacity(IX5WebSettings.DEFAULT_CACHE_CAPACITY);
+        webSetting.setPluginState(WebSettings.PluginState.ON_DEMAND);
+        webSetting.setLoadWithOverviewMode(true);
+        webSetting.setBuiltInZoomControls(true);
+        webSetting.setJavaScriptEnabled(true);
+        webSetting.setUseWideViewPort(true);
+        webSetting.setSupportZoom(true);
+        webSetting.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSetting.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSetting.setGeolocationEnabled(true);
+        webSetting.setDomStorageEnabled(true);
+        webSetting.setDatabaseEnabled(true);
+        webSetting.setUseWideViewPort(true); // 关键点
+        webSetting.setAllowFileAccess(true); // 允许访问文件
+        webSetting.setSupportZoom(true); // 支持缩放
+        webSetting.setLoadWithOverviewMode(true);
+        webSetting.setPluginState(WebSettings.PluginState.ON);
+        webSetting.setCacheMode(WebSettings.LOAD_NO_CACHE); // 不加载缓存内容
 
         //支持屏幕缩放
-        webSettings.setSupportZoom(true);
-        webSettings.setBuiltInZoomControls(true);
+        webSetting.setSupportZoom(true);
+        webSetting.setBuiltInZoomControls(true);
         webView.loadUrl("http://101.200.194.246:9222/");
 
 
