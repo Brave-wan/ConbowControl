@@ -1,0 +1,238 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_chat_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="15dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/icon_main_title_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="康宝调教器"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/img_tune_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/icon_chat_menu" />
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_chat_title"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#dfdfdf" />
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.7"
+            android:paddingTop="15dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.ijourney.conbowcontrol.view.MyGridView
+                    android:id="@+id/rv_fixed_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:horizontalSpacing="5dp"
+                    android:listSelector="@android:color/transparent"
+                    android:numColumns="3"
+                    android:verticalSpacing="10dp" />
+
+
+                <com.ijourney.conbowcontrol.view.MyGridView
+                    android:id="@+id/rv_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:horizontalSpacing="5dp"
+                    android:listSelector="@android:color/transparent"
+                    android:numColumns="3"
+                    android:verticalSpacing="10dp" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#dfdfdf" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.6"
+            android:orientation="vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="20dp">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/ed_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_features_edit_bg"
+                    android:gravity="left|top"
+                    android:hint="请输入文本内容"
+                    android:padding="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="20dp"
+                    android:textSize="14sp" />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/ll_bottom_btn"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="0.6">
+
+            <TextView
+                android:id="@+id/tx_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_chat_edit_tx_bg"
+                android:padding="5dp"
+                android:text="保存"
+                android:textColor="@drawable/shape_chat_edit_tx_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tx_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tx_save"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/tx_save"
+                android:background="@drawable/shape_chat_edit_tx_bg"
+                android:padding="5dp"
+                android:text="发送"
+                android:textColor="@drawable/shape_chat_edit_tx_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tx_socket_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tx_save"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/tx_send"
+                android:background="@drawable/shape_chat_edit_tx_bg"
+                android:padding="5dp"
+                android:text="服务重连"
+                android:textColor="@drawable/shape_chat_edit_tx_color"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/tx_socket_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tx_save"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/tx_socket_connect"
+                android:background="@drawable/shape_chat_edit_tx_bg"
+                android:padding="5dp"
+                android:text="康宝状态"
+                android:textColor="@drawable/shape_chat_edit_tx_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tx_kang_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_save"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/shape_chat_edit_tx_bg"
+                android:padding="5dp"
+                android:text="左摇头"
+                android:textColor="@drawable/shape_chat_edit_tx_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tx_kang_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_save"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/tx_kang_left"
+                android:background="@drawable/shape_chat_edit_tx_bg"
+                android:padding="5dp"
+                android:text="右摇头"
+                android:textColor="@drawable/shape_chat_edit_tx_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tx_kang_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_save"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/tx_kang_right"
+                android:background="@drawable/shape_chat_edit_tx_bg"
+                android:padding="5dp"
+                android:text="重置位置"
+                android:textColor="@drawable/shape_chat_edit_tx_color"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/btn_add"
+        android:layout_width="80sp"
+        android:layout_height="50sp"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/icon_chat_add" />
+</RelativeLayout>

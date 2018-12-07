@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.ijourney.conbowcontrol.MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,16 +21,17 @@
 
         <activity
             android:name=".old.FeaturesActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
+
         <activity
             android:name=".old.OldChatActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
 
         </activity>
 
         <activity
             android:name="com.ijourney.conbowcontrol.ChatActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

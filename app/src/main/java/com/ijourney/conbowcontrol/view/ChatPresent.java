@@ -1,8 +1,14 @@
 package com.ijourney.conbowcontrol.view;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -33,6 +39,7 @@ public class ChatPresent {
     // 每隔2秒发送一次心跳包，检测连接没有断开
     private static final long HEART_BEAT_RATE = 10 * 1000;
     private IChatView mView;
+    private ProgressDialog dialog;
 
     // 发送心跳包
     private Runnable heartBeatRunnable = new Runnable() {
@@ -51,6 +58,8 @@ public class ChatPresent {
     public ChatPresent(Context mContext, IChatView mView) {
         this.mContext = mContext;
         this.mView = mView;
+        dialog = new ProgressDialog(mContext);
+        dialog.setMessage("正在初始化...");
     }
 
     private WebSocket mSocket;
@@ -224,6 +233,46 @@ public class ChatPresent {
         String name = StringUtils.isEmpty(SharedPreferencesUtils.init(mContext).getString(tag)) ? state
                 : SharedPreferencesUtils.init(mContext).getString(tag);
         return name;
+
+    }
+
+
+    public void initWebView(WebView webView, Context mContext) {
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                ToastUtils.showShort("加载完毕");
+                if (dialog != null)
+                    dialog.dismiss();
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                ToastUtils.showShort("开始加载");
+                if (dialog != null)
+                    dialog.show();
+            }
+        });
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);//允许使用js
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+
+        /**
+         * LOAD_CACHE_ONLY: 不使用网络，只读取本地缓存数据
+         * LOAD_DEFAULT: （默认）根据cache-control决定是否从网络上取数据。
+         * LOAD_NO_CACHE: 不使用缓存，只从网络获取数据.
+         * LOAD_CACHE_ELSE_NETWORK，只要本地有，无论是否过期，或者no-cache，都使用缓存中的数据。
+         */
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);//不使用缓存，只从网络获取数据.
+
+        //支持屏幕缩放
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webView.loadUrl("http://101.200.194.246:9222/");
+
 
     }
 

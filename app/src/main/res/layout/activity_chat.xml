@@ -34,5 +34,6 @@
                 android:layout_gravity="end"
                 android:text="Send" />
         </LinearLayout>
+
     </LinearLayout>
 </layout>

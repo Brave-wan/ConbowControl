@@ -1,6 +1,7 @@
 package com.ijourney.conbowcontrol.old;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,12 +10,16 @@ import android.support.v4.util.ArraySet;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.StringUtils;
@@ -49,7 +54,9 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
     public static final String BUNDLE_PARTICIPANT = "bundle_participant";
     public static final String MSG_PREFIX = "msg:";
     private static final String STATUS_EXIT_CHAT = "status:exit_chat";
+    public static final String TURN_PREFIX = "turn:";
     private ActivityChatBinding binding;
+    private WebView web_view;
     private NearConnect mNearConnect;
     private Host mParticipant;
 
@@ -145,6 +152,13 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         findViewById(R.id.tx_send).setOnClickListener(this);
         findViewById(R.id.tx_save).setOnClickListener(this);
         findViewById(R.id.btn_add).setOnClickListener(this);
+        findViewById(R.id.tx_kang_left).setOnClickListener(this);
+        findViewById(R.id.tx_kang_right).setOnClickListener(this);
+        findViewById(R.id.tx_kang_reset).setOnClickListener(this);
+        findViewById(R.id.btn_reload).setOnClickListener(this);
+        findViewById(R.id.ll_hint_keyword).setOnClickListener(this);
+        web_view = findViewById(R.id.web_view);
+
         tx_socket_state.setOnCheckedChangeListener(this);
         findViewById(R.id.tx_socket_connect).setOnClickListener(this);
         ed_content = findViewById(R.id.ed_content);
@@ -155,6 +169,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         initFixedAdapter();
         clearListState();
         initNearConnect();
+        present.initWebView(web_view, this);
 
     }
 
@@ -238,8 +253,22 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
     public void onClick(View v) {
 
         switch (v.getId()) {
+            case R.id.tx_kang_left:
+                sendMotion("l:45");
+                break;
+            case R.id.tx_kang_right:
+                sendMotion("r:45");
+                break;
+            case R.id.tx_kang_reset:
+                sendMotion("reset");
+                break;
             case R.id.img_tune_add:
                 startActivity(new Intent(this, FeaturesActivity.class));
+                break;
+            case R.id.ll_hint_keyword:
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
                 break;
 
             case R.id.tx_send:
@@ -248,6 +277,9 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 } else {
                     Toast.makeText(this, "请输入命令类容!", Toast.LENGTH_LONG).show();
                 }
+                break;
+            case R.id.btn_reload:
+                web_view.reload(); //刷新
                 break;
             case R.id.tx_save:
                 String edContentMsg = ed_content.getText().toString().trim();
@@ -327,6 +359,10 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
 
     private void sendMessage(String message) {
         mNearConnect.send((MSG_PREFIX + message).getBytes(), mParticipant);
+    }
+
+    private void sendMotion(String message) {
+        mNearConnect.send((TURN_PREFIX + message).getBytes(), mParticipant);
     }
 
     @Override
