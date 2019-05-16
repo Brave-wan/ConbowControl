@@ -90,9 +90,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onDiscoveryTimeout() {
-                Snackbar.make(binding.getRoot(),
-                        "No other conbow found",
-                        Snackbar.LENGTH_LONG).show();
+                Snackbar.make(binding.getRoot(), "No other conbow found", Snackbar.LENGTH_LONG).show();
                 binding.discoveryPb.setVisibility(View.GONE);
                 mDiscovering = false;
                 binding.startChattingBtn.setText("Start Searching Conbow");

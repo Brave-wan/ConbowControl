@@ -295,7 +295,7 @@ public class ChatPresent {
         //支持屏幕缩放
         webSetting.setSupportZoom(true);
         webSetting.setBuiltInZoomControls(true);
-        webView.loadUrl("http://101.200.194.246:9222/");
+        webView.loadUrl("http://101.200.194.246:9222/manageoperate.aspx");
 
 
     }

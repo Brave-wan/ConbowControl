@@ -11,6 +11,7 @@
         android:paddingLeft="15dp">
 
         <ImageView
+            android:id="@+id/image_old_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -220,6 +221,20 @@
                 android:background="@drawable/shape_chat_edit_tx_bg"
                 android:padding="5dp"
                 android:text="重置位置"
+                android:textColor="@drawable/shape_chat_edit_tx_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tx_kang_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_save"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/tx_kang_reset"
+                android:background="@drawable/shape_chat_edit_tx_bg"
+                android:padding="5dp"
+                android:text="慷宝重连"
+                android:visibility="gone"
                 android:textColor="@drawable/shape_chat_edit_tx_color"
                 android:textSize="16sp" />
         </RelativeLayout>

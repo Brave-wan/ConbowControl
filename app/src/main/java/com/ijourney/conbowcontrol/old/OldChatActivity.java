@@ -22,7 +22,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ijourney.conbowcontrol.R;
@@ -60,6 +62,9 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
     private NearConnect mNearConnect;
     private Host mParticipant;
 
+    private boolean isConnect = true;
+    private TextView tx_kang_connect;
+
 
     private boolean discoveryStarted;
     private ChatPresent present;
@@ -90,17 +95,20 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
             public void onReceive(byte[] bytes, Host sender) {
                 if (bytes != null) {
                     String data = new String(bytes);
+                    LogUtils.i("data:" + data);
                     switch (data) {
                         case STATUS_EXIT_CHAT:
-                            binding.msgLl.setVisibility(View.GONE);
+                            isConnect = false;
+                            ToastUtils.showShort("已经断开连接");
                             new AlertDialog.Builder(OldChatActivity.this)
-                                    .setMessage(String.format("%s has left the control.", sender.getName()))
+                                    .setMessage(String.format("%s 已经断开连接.", sender.getName()))
                                     .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            mNearConnect.stopReceiving(true);
-                                            OldChatActivity.this.setResult(RESULT_OK);
-                                            OldChatActivity.this.finish();
+//                                            mNearConnect.stopReceiving(true);
+//                                            OldChatActivity.this.setResult(RESULT_OK);
+//                                            OldChatActivity.this.finish();
+//
                                         }
                                     }).create().show();
                             break;
@@ -155,7 +163,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         findViewById(R.id.tx_kang_left).setOnClickListener(this);
         findViewById(R.id.tx_kang_right).setOnClickListener(this);
         findViewById(R.id.tx_kang_reset).setOnClickListener(this);
-        findViewById(R.id.btn_reload).setOnClickListener(this);
+        findViewById(R.id.btn_reload).setOnClickListener(myClick);
         findViewById(R.id.ll_hint_keyword).setOnClickListener(this);
         web_view = findViewById(R.id.web_view);
 
@@ -165,6 +173,8 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
 
         tx_socket_state.setText(service_state.equals("0") ? "关闭康宝说话" : "开启康宝说话");
         tx_socket_state.setChecked(service_state.equals("0"));
+        tx_kang_connect = findViewById(R.id.tx_kang_connect);
+        tx_kang_connect.setOnClickListener(this);
         initAdapter();
         initFixedAdapter();
         clearListState();
@@ -184,6 +194,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         rv_fixed_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                checkIsConnect();
                 fixedBean = (FixedBean) fixedListAdapter.getItem(position);
                 fixedPositon = position;
                 bean = null;
@@ -217,6 +228,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         rv_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                checkIsConnect();
                 bean = (FeaturesBean) gridListAdapter.getItem(position);
                 fixedBean = null;
                 clearFixedState();
@@ -251,7 +263,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
 
     @Override
     public void onClick(View v) {
-
+        checkIsConnect();
         switch (v.getId()) {
             case R.id.tx_kang_left:
                 sendMotion("l:45");
@@ -270,6 +282,9 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 break;
+            case R.id.tx_kang_connect:
+                initNearConnect();
+                break;
 
             case R.id.tx_send:
                 if (!StringUtils.isEmpty(ed_content.getText().toString())) {
@@ -278,9 +293,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                     Toast.makeText(this, "请输入命令类容!", Toast.LENGTH_LONG).show();
                 }
                 break;
-            case R.id.btn_reload:
-                web_view.reload(); //刷新
-                break;
+
             case R.id.tx_save:
                 String edContentMsg = ed_content.getText().toString().trim();
                 msgSave(edContentMsg);
@@ -298,6 +311,18 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         }
     }
 
+
+    OnClickListener myClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btn_reload:
+                    web_view.reload(); //刷新
+                    break;
+            }
+
+        }
+    };
     private int fixedPositon = 0;
 
     public void msgSave(String msg) {
@@ -380,5 +405,12 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         initFixedAdapter();
         tx_socket_state.setText(isChecked ? "关闭康宝说话" : "开启康宝说话");
 
+    }
+
+    public void checkIsConnect() {
+        if (!isConnect) {
+            ToastUtils.showShort("已经和康宝断开连接!");
+            return;
+        }
     }
 }
