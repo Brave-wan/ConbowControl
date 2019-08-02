@@ -241,6 +241,13 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 initAdapter();
                 ed_content.setText(bean.getContent());
                 if (!StringUtils.isEmpty(bean.getContent())) {
+                    if (bean.getContent().equals("好的")) {
+                        sendMotion("reset");
+                    }
+
+                    if (bean.getContent().equals(",")) {
+                        sendMotion("r:45");
+                    }
                     sendMessage(bean.getContent());
                 }
             }
