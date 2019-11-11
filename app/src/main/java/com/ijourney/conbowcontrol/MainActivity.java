@@ -13,17 +13,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.ArraySet;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.NetworkUtils;
+import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.ijourney.conbowcontrol.bean.FeaturesBean;
+import com.ijourney.conbowcontrol.bean.FixedBean;
 import com.ijourney.conbowcontrol.databinding.ActivityMainBinding;
 import com.ijourney.conbowcontrol.old.OldChatActivity;
+import com.ijourney.conbowcontrol.view.ChatPresent;
+import com.ijourney.conbowcontrol.view.IChatView;
 import com.ijourney.p2plib.connect.NearConnect;
 import com.ijourney.p2plib.discovery.NearDiscovery;
 import com.ijourney.p2plib.model.Host;
 
+import org.litepal.crud.DataSupport;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener, IChatView {
 
     private static final long DISCOVERABLE_TIMEOUT_MILLIS = 60000;
     private static final long DISCOVERY_TIMEOUT_MILLIS = 10000;
@@ -37,11 +53,15 @@ public class MainActivity extends Activity {
     private Snackbar mDiscoveryInProgressSnackbar;
     private ParticipantsAdapter mParticipantsAdapter;
     private boolean mDiscovering;
+    List<FixedBean> featuresBeans = new ArrayList<>();
+    BaseQuickAdapter<FixedBean, BaseViewHolder> adapter;
+    ChatPresent chatPresent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
         mNearDiscovery = new NearDiscovery.Builder()
                 .setContext(this)
                 .setDiscoverableTimeoutMillis(DISCOVERABLE_TIMEOUT_MILLIS)
@@ -49,6 +69,8 @@ public class MainActivity extends Activity {
                 .setDiscoverablePingIntervalMillis(DISCOVERABLE_PING_INTERVAL_MILLIS)
                 .setDiscoveryListener(getNearDiscoveryListener(), Looper.getMainLooper())
                 .build();
+        binding.menuCheck.setOnClickListener(this);
+        chatPresent = new ChatPresent(this, this);
         binding.startChattingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,8 +98,50 @@ public class MainActivity extends Activity {
                 mNearConnect.send(MESSAGE_REQUEST_START_CHAT.getBytes(), host);
             }
         });
+
         binding.participantsRv.setLayoutManager(new LinearLayoutManager(this));
         binding.participantsRv.setAdapter(mParticipantsAdapter);
+        featuresBeans = chatPresent.getFixedTop();
+        binding.btnReset.setOnClickListener(this);
+        binding.btnConnect.setOnClickListener(this);
+
+        initAdapter();
+    }
+
+    private void initAdapter() {
+        binding.menuList.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new BaseQuickAdapter<FixedBean, BaseViewHolder>(R.layout.item_features, featuresBeans) {
+            @Override
+            protected void convert(BaseViewHolder helper, FixedBean item) {
+                TextView btn_name = helper.itemView.findViewById(R.id.btn_name);
+                if (item.isCheck()) {
+                    btn_name.setBackgroundColor(getResources().getColor(R.color.spots_dialog_color));
+                    btn_name.setTextColor(getResources().getColor(R.color.white));
+                } else {
+                    btn_name.setBackgroundColor(getResources().getColor(R.color.black));
+                    btn_name.setTextColor(getResources().getColor(R.color.white));
+                }
+                btn_name.setText(item.getName());
+            }
+        };
+        binding.menuList.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                FixedBean fixedBean = (FixedBean) adapter.getItem(position);
+
+                for (FixedBean features : featuresBeans) {
+                    features.setCheck(false);
+                }
+                featuresBeans.get(position).setCheck(true);
+
+                if (!StringUtils.isEmpty(fixedBean.getSocket_position()) && !StringUtils.isEmpty(fixedBean.getSocket_page())) {
+                    chatPresent.sendMsgData(fixedBean.getSocket_position(), fixedBean.getSocket_page(), fixedBean.getType());
+
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @NonNull
@@ -131,17 +195,18 @@ public class MainActivity extends Activity {
 
             @Override
             public void onSendComplete(long jobId) {
+                ToastUtils.showLong("onSendComplete" + jobId);
 
             }
 
             @Override
             public void onSendFailure(Throwable e, long jobId) {
-
+                ToastUtils.showLong("onSendFailure" + e.getMessage());
             }
 
             @Override
             public void onStartListenFailure(Throwable e) {
-
+                ToastUtils.showLong("onStartListenFailure" + e.getMessage());
             }
         };
     }
@@ -184,5 +249,42 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         mNearConnect.startReceiving();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.menu_check:
+                int btnLayout = binding.llBtnLayout.getVisibility();
+                binding.llBtnLayout.setVisibility(btnLayout == 0 ? View.GONE : View.VISIBLE);
+                int menuLayout = binding.llMenuLayout.getVisibility();
+                binding.llMenuLayout.setVisibility(menuLayout == 0 ? View.GONE : View.VISIBLE);
+                if (binding.menuCheck.getText().equals("切到手动控制")) {
+                    binding.menuCheck.setText("切到康宝控制");
+                    chatPresent.initWebView(binding.mainWebView, this);
+                    chatPresent.setListener();
+                } else {
+                    binding.menuCheck.setText("切到手动控制");
+                }
+
+                break;
+            case R.id.btn_Reset:
+                binding.mainWebView.reload();
+                break;
+            case R.id.btn_connect:
+                chatPresent.setListener();
+                break;
+        }
+
+    }
+
+    @Override
+    public void showMsg() {
+
+    }
+
+    @Override
+    public void sendChatMsg(String s, String s1, String type, String s2) {
+
     }
 }

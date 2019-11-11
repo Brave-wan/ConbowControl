@@ -1,5 +1,6 @@
 package com.ijourney.conbowcontrol.old;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -64,6 +65,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
 
     private boolean isConnect = true;
     private TextView tx_kang_connect;
+    private ImageView image_old_back;
 
 
     private boolean discoveryStarted;
@@ -72,12 +74,16 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
     private List<FeaturesBean> featuresBeans = new ArrayList<>();
     private CheckBox tx_socket_state;
 
+    public static void start(Activity activity) {
+        Intent intent = new Intent(activity, OldChatActivity.class);
+        activity.startActivityForResult(intent, 1234);
+    }
+
     public static void start(Activity activity, Host participant) {
         Intent intent = new Intent(activity, OldChatActivity.class);
         intent.putExtra(BUNDLE_PARTICIPANT, participant);
         activity.startActivityForResult(intent, 1234);
     }
-
 
     private void initNearConnect() {
         ArraySet<Host> peers = new ArraySet<>();
@@ -105,10 +111,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                                     .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-//                                            mNearConnect.stopReceiving(true);
-//                                            OldChatActivity.this.setResult(RESULT_OK);
-//                                            OldChatActivity.this.finish();
-//
+
                                         }
                                     }).create().show();
                             break;
@@ -147,6 +150,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         initView();
     }
 
+
     private void initView() {
         mParticipant = getIntent().getParcelableExtra(BUNDLE_PARTICIPANT);
         featuresBeans = DataSupport.findAll(FeaturesBean.class);
@@ -154,6 +158,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
 
         findViewById(R.id.img_tune_add).setOnClickListener(this);
         scrollView = findViewById(R.id.scrollView);
+        image_old_back = findViewById(R.id.image_old_back);
         rv_fixed_list = findViewById(R.id.rv_fixed_list);
         tx_socket_state = findViewById(R.id.tx_socket_state);
         rv_list = findViewById(R.id.rv_list);
@@ -175,12 +180,12 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
         tx_socket_state.setChecked(service_state.equals("0"));
         tx_kang_connect = findViewById(R.id.tx_kang_connect);
         tx_kang_connect.setOnClickListener(this);
+        image_old_back.setOnClickListener(this);
         initAdapter();
         initFixedAdapter();
         clearListState();
         initNearConnect();
         present.initWebView(web_view, this);
-
     }
 
     List<FixedBean> fixedBeans = new ArrayList<>();
@@ -204,7 +209,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 }
                 fixedBeans.get(position).setCheck(true);
                 fixedListAdapter.setData(fixedBeans);
-                if (!StringUtils.isEmpty(fixedBean.getContent()) && fixedBean.getType().equals("0")) {
+                if (!StringUtils.isEmpty(fixedBean.getContent()) && tx_socket_state.isChecked()) {
                     sendMessage(fixedBean.getContent());
                 }
                 if (!StringUtils.isEmpty(fixedBean.getSocket_position()) && !StringUtils.isEmpty(fixedBean.getSocket_page())) {
@@ -240,7 +245,7 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 bean.save();
                 initAdapter();
                 ed_content.setText(bean.getContent());
-                if (!StringUtils.isEmpty(bean.getContent())) {
+                if (!StringUtils.isEmpty(bean.getContent()) && tx_socket_state.isChecked()) {
                     if (bean.getContent().equals("好的")) {
                         sendMotion("reset");
                     }
@@ -313,6 +318,9 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
                 break;
             case R.id.tx_socket_connect:
                 present.setListener();
+                break;
+            case R.id.image_old_back:
+                finish();
                 break;
 
         }
@@ -406,9 +414,11 @@ public class OldChatActivity extends Activity implements IChatView, OnClickListe
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        SharedPreferencesUtils.init(this).put("call_state", isChecked ? "0" : "1");
-        SharedPreferencesUtils.init(this).put("freeze_state", isChecked ? "0" : "1");
-        SharedPreferencesUtils.init(this).put("service_state", isChecked ? "0" : "1");
+//        SharedPreferencesUtils.init(this).put("fixed_call", isChecked ? "0" : "1");
+//        SharedPreferencesUtils.init(this).put("fixed_pass", isChecked ? "0" : "1");
+//        SharedPreferencesUtils.init(this).put("fixed_service", isChecked ? "0" : "1");
+//        SharedPreferencesUtils.init(this).put("diu_shi", isChecked ? "0" : "1");
+//        SharedPreferencesUtils.init(this).put("xun_gen", isChecked ? "0" : "1");
         initFixedAdapter();
         tx_socket_state.setText(isChecked ? "关闭康宝说话" : "开启康宝说话");
 
