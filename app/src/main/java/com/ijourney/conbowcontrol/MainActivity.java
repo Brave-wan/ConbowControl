@@ -9,20 +9,21 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.ArraySet;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.ijourney.conbowcontrol.bean.FeaturesBean;
+import com.ijourney.conbowcontrol.adapter.ExpandableListViewAdapter;
+import com.ijourney.conbowcontrol.bean.FixFatherBean;
 import com.ijourney.conbowcontrol.bean.FixedBean;
 import com.ijourney.conbowcontrol.databinding.ActivityMainBinding;
 import com.ijourney.conbowcontrol.old.OldChatActivity;
@@ -32,9 +33,6 @@ import com.ijourney.p2plib.connect.NearConnect;
 import com.ijourney.p2plib.discovery.NearDiscovery;
 import com.ijourney.p2plib.model.Host;
 
-import org.litepal.crud.DataSupport;
-
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +55,10 @@ public class MainActivity extends Activity implements View.OnClickListener, ICha
     BaseQuickAdapter<FixedBean, BaseViewHolder> adapter;
     ChatPresent chatPresent;
 
+    private List<FixFatherBean> fixFatherBeanList = new ArrayList<>();
+
+    private int selectGroupPosition=-1;
+    private int selectChildPosition=-1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,10 +108,61 @@ public class MainActivity extends Activity implements View.OnClickListener, ICha
         binding.btnConnect.setOnClickListener(this);
 
         initAdapter();
+        binding.llBtnLayout.setVisibility( View.GONE);
+        binding.llMenuLayout.setVisibility(View.GONE);
+        binding.expandableListView.setVisibility(View.VISIBLE);
+
+        initExpandAdapter();
+//        chatPresent.initWebView(binding.mainWebView, this);
+        chatPresent.setListener();
+    }
+
+    private void initExpandAdapter() {
+        fixFatherBeanList = chatPresent.getFixFatherData();
+        final ExpandableListViewAdapter exAdapter = new ExpandableListViewAdapter(this,fixFatherBeanList);
+
+        binding.expandableListView.setAdapter(exAdapter);
+        binding.expandableListView.expandGroup(0);
+        binding.expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                int count = binding.expandableListView.getExpandableListAdapter().getGroupCount();
+                for(int j = 0; j < count; j++){
+                    if(j != groupPosition){
+                        binding.expandableListView.collapseGroup(j);
+                    }
+                }
+            }
+        });
+//        binding.expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//            @Override
+//            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
+//                return false;
+//            }
+//        });
+        binding.expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
+                if(selectChildPosition!=-1&&selectGroupPosition!=-1){
+
+                    fixFatherBeanList.get(selectGroupPosition).getChildListBean().get(selectChildPosition).setCheck(false);
+                }
+                selectGroupPosition = groupPosition;
+                selectChildPosition = childPosition;
+                fixFatherBeanList.get(selectGroupPosition).getChildListBean().get(selectChildPosition).setCheck(true);
+                FixedBean fixedBean = fixFatherBeanList.get(groupPosition).getChildListBean().get(childPosition);
+                if (!StringUtils.isEmpty(fixedBean.getSocket_position()) && !StringUtils.isEmpty(fixedBean.getSocket_page())) {
+                    chatPresent.sendMsgData(fixedBean.getSocket_position(), fixedBean.getSocket_page(), fixedBean.getType());
+
+                }
+                exAdapter.notifyDataSetChanged();
+                return false;
+            }
+        });
     }
 
     private void initAdapter() {
-        binding.menuList.setLayoutManager(new LinearLayoutManager(this));
+        binding.menuList.setLayoutManager(new GridLayoutManager(this,2));
         adapter = new BaseQuickAdapter<FixedBean, BaseViewHolder>(R.layout.item_features, featuresBeans) {
             @Override
             protected void convert(BaseViewHolder helper, FixedBean item) {
@@ -122,6 +175,11 @@ public class MainActivity extends Activity implements View.OnClickListener, ICha
                     btn_name.setTextColor(getResources().getColor(R.color.white));
                 }
                 btn_name.setText(item.getName());
+                ViewGroup.LayoutParams layoutParams = btn_name.getLayoutParams();
+                layoutParams.height = item.getVisibility()==1? 80:40;
+                btn_name.setLayoutParams(layoutParams);
+
+                btn_name.setVisibility(item.getVisibility() == 1 ? View.VISIBLE : View.INVISIBLE);
             }
         };
         binding.menuList.setAdapter(adapter);
@@ -255,10 +313,8 @@ public class MainActivity extends Activity implements View.OnClickListener, ICha
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.menu_check:
-                int btnLayout = binding.llBtnLayout.getVisibility();
-                binding.llBtnLayout.setVisibility(btnLayout == 0 ? View.GONE : View.VISIBLE);
-                int menuLayout = binding.llMenuLayout.getVisibility();
-                binding.llMenuLayout.setVisibility(menuLayout == 0 ? View.GONE : View.VISIBLE);
+                binding.llBtnLayout.setVisibility( View.GONE);
+                binding.llMenuLayout.setVisibility(View.VISIBLE);
                 if (binding.menuCheck.getText().equals("切到手动控制")) {
                     binding.menuCheck.setText("切到康宝控制");
                     chatPresent.initWebView(binding.mainWebView, this);

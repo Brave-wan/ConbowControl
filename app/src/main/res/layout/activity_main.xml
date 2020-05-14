@@ -6,12 +6,22 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingTop="@dimen/dp_10">
-
+        <ExpandableListView
+            android:id="@+id/expandableListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cacheColorHint="#00000000"
+            android:divider="#ebebeb"
+            android:dividerHeight="1dp"
+            android:choiceMode="singleChoice"
+            android:footerDividersEnabled="false"
+            android:groupIndicator="@null"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/start_chatting_btn"
@@ -44,8 +54,7 @@
                 android:id="@+id/participants_rv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:visibility="gone" />
+                android:layout_weight="1"/>
 
             <ProgressBar
                 android:id="@+id/discovery_pb"
@@ -62,11 +71,14 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/menu_list"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_marginStart="100dp"
+                android:background="#00ff00"
+                android:layout_marginEnd="100dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" />
 
@@ -74,7 +86,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="6"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <WebView
                     android:id="@+id/main_web_view"

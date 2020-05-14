@@ -10,6 +10,8 @@ public class FixedBean {
     private int id;
     private String tag;
 
+    private int visibility;
+
     public void setId(int id) {
         this.id = id;
     }
@@ -38,17 +40,17 @@ public class FixedBean {
         isCheck = check;
     }
 
-    public FixedBean() {
-
-    }
-
     public FixedBean(String name, String content, String socket_position, String socket_page, String tag, String type) {
+            this(name,content,socket_position,socket_page,tag,type,1);
+    }
+    public FixedBean(String name, String content, String socket_position, String socket_page, String tag, String type,int visibility) {
         this.name = name;
         this.content = content;
         this.socket_page = socket_page;
         this.socket_position = socket_position;
         this.tag = tag;
         this.type = type;
+        this.visibility = visibility;
 
     }
 
@@ -86,5 +88,13 @@ public class FixedBean {
 
     public String getContent() {
         return content;
+    }
+
+    public int getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(int visibility) {
+        this.visibility = visibility;
     }
 }
